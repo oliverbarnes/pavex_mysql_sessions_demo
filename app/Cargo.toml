@@ -36,6 +36,7 @@ sqlx = { version = "0.8.3", features = [
     "postgres",
 ] }
 tokio = { version = "1", features = ["macros", "rt"] }
+anyhow = "1"
 uuid = { version = "1.16.0", features = ["v4", "serde"] }
 workspace_hack = { path = "../workspace_hack" }
 pavex_session = "0.1"

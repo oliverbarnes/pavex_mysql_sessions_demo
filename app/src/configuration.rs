@@ -1,7 +1,7 @@
 use pavex::blueprint::Blueprint;
 use pavex::server::IncomingStream;
+use pavex::t;
 use pavex::time::SignedDuration;
-use pavex::{f, t};
 use secrecy::{ExposeSecret, SecretString};
 use serde::Deserialize;
 use serde_aux::field_attributes::deserialize_number_from_string;
@@ -13,7 +13,7 @@ use sqlx::postgres::{PgConnectOptions, PgPool, PgPoolOptions, PgSslMode};
 pub fn register(bp: &mut Blueprint) {
     bp.config("server", t!(self::ServerConfig));
     bp.config("database", t!(self::DatabaseConfig));
-    bp.singleton(f!(crate::configuration::DatabaseConfig::get_pool));
+    // bp.singleton(f!(crate::configuration::DatabaseConfig::get_pool));
 }
 
 #[derive(serde::Deserialize, Debug, Clone)]

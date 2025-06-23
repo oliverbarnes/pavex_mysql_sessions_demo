@@ -26,7 +26,9 @@ impl TestApi {
         let server_builder = Server::new().listen(tcp_listener);
         let api_address = format!("http://{}:{}", config.server.ip, address.port());
 
-        let application_state = ApplicationState::new(config)
+        let pool = config.database.get_pool().await;
+
+        let application_state = ApplicationState::new(config, pool)
             .await
             .expect("Failed to build the application state");
 
