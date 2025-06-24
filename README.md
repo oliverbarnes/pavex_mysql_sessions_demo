@@ -2,6 +2,8 @@
 
 For testing https://github.com/LukeMathWalker/pavex/pull/497
 
+Adapts database config from https://github.com/sentinel1909/rusty-flash-knowledge
+
 # Getting started
 
 ## Prerequisites
