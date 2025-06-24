@@ -1,6 +1,8 @@
 # Pavex SQLite sessions store demo
 
-For testing https://github.com/LukeMathWalker/pavex/pull/497
+Testing https://github.com/LukeMathWalker/pavex/pull/497
+
+Uses session installation code from Pavex [docs on sessions installation](https://github.com/LukeMathWalker/pavex/tree/main/doc_examples/guide/sessions/installation/project/src).
 
 Adapts database config from https://github.com/sentinel1909/rusty-flash-knowledge
 
