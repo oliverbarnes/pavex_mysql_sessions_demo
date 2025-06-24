@@ -1,5 +1,5 @@
 use anyhow::Error;
-use pavex::response::Response;
+use pavex::response::{Response, body::Json};
 use pavex_session::Session;
 
 #[derive(serde::Serialize, serde::Deserialize)] // (1)!
@@ -10,5 +10,6 @@ struct AuthInfo {
 
 pub async fn handler(session: &Session<'_>) -> Result<Response, Error> {
     let auth_info: Option<AuthInfo> /* (2)! */ = session.get("user").await?;
-    Ok(Response::ok())
+    let json = Json::new(auth_info).expect("Failed to serialize the response body");
+    Ok(Response::ok().set_typed_body(json))
 }
