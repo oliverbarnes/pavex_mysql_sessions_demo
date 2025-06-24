@@ -1,4 +1,6 @@
-# demo
+# Pavex SQLite sessions store demo
+
+For testing https://github.com/LukeMathWalker/pavex/pull/497
 
 # Getting started
 
