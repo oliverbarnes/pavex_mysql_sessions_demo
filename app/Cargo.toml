@@ -17,9 +17,9 @@ unexpected_cfgs = { level = "allow", check-cfg = ['cfg(pavex_ide_hint)'] }
 [dependencies]
 cargo_px_env = "0.1"
 humantime-serde = "1.1"
-pavex = { version = "0.1.80" }
-pavex_tracing = { version = "0.1.80" }
-pavex_cli_client = { version = "0.1.80" }
+pavex = { path = "../../libs/pavex" }
+pavex_tracing = { path = "../../libs/pavex_tracing" }
+pavex_cli_client = { path = "../../libs/pavex_cli_client" }
 tracing = "0.1"
 tracing-log = "0.2.0"
 tracing_log_error = "0.1"
@@ -33,11 +33,16 @@ sqlx = { version = "0.8.3", features = [
     "uuid",
     "macros",
     "time",
-    "postgres",
+    "sqlite",
+    "runtime-tokio-rustls",
 ] }
 tokio = { version = "1", features = ["macros", "rt"] }
 anyhow = "1"
 uuid = { version = "1.16.0", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+serde_json = "1"
 workspace_hack = { path = "../workspace_hack" }
-pavex_session = "0.1"
-pavex_session_sqlx = { version = "0.1", features = ["postgres"] }
+pavex_session = { path = "../../libs/pavex_session" }
+pavex_session_sqlx = { path = "../../libs/pavex_session_sqlx", features = [
+    "sqlite",
+] }
