@@ -1,6 +1,10 @@
 //! Refer to Pavex's [configuration guide](https://pavex.dev/docs/guide/configuration) for more details
 //! on how to manage configuration values.
 use pavex::server::IncomingStream;
+use pavex_session_sqlx::SqliteSessionStore;
+use serde::Deserialize;
+use sqlx::ConnectOptions;
+use sqlx::sqlite::{SqliteConnectOptions, SqlitePool, SqlitePoolOptions};
 
 #[derive(serde::Deserialize, Clone, Debug)]
 /// A group of configuration values to showcase how app config works.
@@ -61,5 +65,36 @@ impl ServerConfig {
     pub async fn listener(&self) -> Result<IncomingStream, std::io::Error> {
         let addr = std::net::SocketAddr::new(self.ip, self.port);
         IncomingStream::bind(addr).await
+    }
+}
+
+// struct type to represent the database configuration
+#[derive(Clone, Debug, Deserialize)]
+#[pavex::config(key = "database", include_if_unused)]
+pub struct DatabaseConfig {
+    pub database_path: String,
+}
+
+impl DatabaseConfig {
+    pub fn connect_options(&self) -> SqliteConnectOptions {
+        SqliteConnectOptions::new()
+            .filename(&self.database_path)
+            .create_if_missing(true)
+            .log_statements(tracing_log::log::LevelFilter::Trace)
+    }
+
+    pub async fn get_pool(&self) -> SqlitePool {
+        let pool = SqlitePoolOptions::new()
+            .acquire_timeout(std::time::Duration::from_secs(2))
+            .connect_lazy_with(self.connect_options());
+
+        // Run migrations
+        let store = SqliteSessionStore::new(pool.clone());
+        store
+            .migrate()
+            .await
+            .expect("Failed to run SQLite migrations");
+
+        pool
     }
 }

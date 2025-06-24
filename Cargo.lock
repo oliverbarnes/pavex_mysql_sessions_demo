@@ -156,14 +156,19 @@ checksum = "e16d2d3311acee920a9eb8d33b8cbc1787ce4a264e85f964c2404b969bdcd487"
 name = "app"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "cargo_px_env",
  "humantime-serde",
- "pavex 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pavex",
  "pavex_cli_client",
- "pavex_tracing 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pavex_session",
+ "pavex_session_sqlx",
+ "pavex_tracing",
  "serde",
  "serde-aux",
+ "sqlx",
  "tracing",
+ "tracing-log 0.2.0",
  "tracing_log_error",
  "workspace_hack",
 ]
@@ -173,6 +178,17 @@ name = "arrayvec"
 version = "0.7.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
+
+[[package]]
+name = "async-trait"
+version = "0.1.88"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e539d3fca749fcee5236ab05e93a52867dd549cc157c8cb7f99595f3cedffdb5"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "atoi"
@@ -1064,7 +1080,7 @@ dependencies = [
  "tokio",
  "tokio-rustls",
  "tower-service",
- "webpki-roots",
+ "webpki-roots 1.0.1",
 ]
 
 [[package]]
@@ -1404,6 +1420,7 @@ version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2e99fb7a497b1e3339bc746195567ed8d3e24945ecd636e3619d20b9de9e9149"
 dependencies = [
+ "cc",
  "pkg-config",
  "vcpkg",
 ]
@@ -1766,58 +1783,13 @@ dependencies = [
  "matchit",
  "mime",
  "paste",
- "pavex_bp_schema 0.1.80",
- "pavex_macros 0.1.80",
- "pavex_reflection 0.1.80",
+ "pavex_bp_schema",
+ "pavex_macros",
+ "pavex_reflection",
  "percent-encoding",
- "persist_if_changed 0.1.80",
+ "persist_if_changed",
  "pin-project-lite",
  "px_workspace_hack",
- "ron",
- "serde",
- "serde_html_form",
- "serde_json",
- "serde_path_to_error",
- "smallvec",
- "socket2",
- "thiserror",
- "tokio",
- "tracing",
- "tracing_log_error",
- "type-safe-id",
- "ubyte",
- "uuid",
-]
-
-[[package]]
-name = "pavex"
-version = "0.1.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0d3e0c8542ef9fa0e2a4751caa6dfcb582b0c3848a9381665327ef579bb06f77"
-dependencies = [
- "anyhow",
- "biscotti",
- "bytes",
- "figment",
- "form_urlencoded",
- "fs-err",
- "futures-util",
- "http",
- "http-body",
- "http-body-util",
- "hyper",
- "hyper-util",
- "indexmap",
- "jiff",
- "matchit",
- "mime",
- "paste",
- "pavex_bp_schema 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
- "pavex_macros 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
- "pavex_reflection 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
- "percent-encoding",
- "persist_if_changed 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
- "pin-project-lite",
  "ron",
  "serde",
  "serde_html_form",
@@ -1838,29 +1810,18 @@ dependencies = [
 name = "pavex_bp_schema"
 version = "0.1.80"
 dependencies = [
- "pavex_reflection 0.1.80",
+ "pavex_reflection",
  "px_workspace_hack",
- "serde",
-]
-
-[[package]]
-name = "pavex_bp_schema"
-version = "0.1.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ce359535f2c1618df79ac9fe128961e7c1f2ec305828101da570a04b98b5686"
-dependencies = [
- "pavex_reflection 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde",
 ]
 
 [[package]]
 name = "pavex_cli_client"
 version = "0.1.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97ee6699a5831e9f40893142f3f28ab6b994e4414629cddd640aebb4cdcf2186"
 dependencies = [
  "anyhow",
- "pavex 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pavex",
+ "px_workspace_hack",
  "thiserror",
 ]
 
@@ -1879,18 +1840,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "pavex_macros"
-version = "0.1.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3bd1c50e2493d97dd4c7256f9a70bc9c3063153f9923b2c8a0f5db601d73ae17"
-dependencies = [
- "convert_case",
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "pavex_reflection"
 version = "0.1.80"
 dependencies = [
@@ -1899,31 +1848,44 @@ dependencies = [
 ]
 
 [[package]]
-name = "pavex_reflection"
-version = "0.1.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f1b1afc00ac004bc48b32e7b05bcc7d0a175077bd4394b183d8ee582cdf716c8"
-dependencies = [
- "serde",
-]
-
-[[package]]
-name = "pavex_tracing"
+name = "pavex_session"
 version = "0.1.80"
 dependencies = [
- "pavex 0.1.80",
+ "anyhow",
+ "async-trait",
+ "pavex",
+ "pavex_tracing",
  "px_workspace_hack",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
  "tracing",
- "tracing_log_error",
+ "uuid",
+]
+
+[[package]]
+name = "pavex_session_sqlx"
+version = "0.1.80"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "jiff-sqlx",
+ "pavex",
+ "pavex_session",
+ "px_workspace_hack",
+ "serde_json",
+ "sqlx",
+ "tokio",
+ "tracing",
 ]
 
 [[package]]
 name = "pavex_tracing"
 version = "0.1.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "86a53510acdc4c2b3d25c6e12ce7f90c14aee9c257b7d251a9ee0abd35eb88d1"
 dependencies = [
- "pavex 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pavex",
+ "px_workspace_hack",
  "tracing",
  "tracing_log_error",
 ]
@@ -1934,7 +1896,7 @@ version = "0.1.80"
 dependencies = [
  "darling",
  "itertools",
- "pavex_bp_schema 0.1.80",
+ "pavex_bp_schema",
  "proc-macro2",
  "px_workspace_hack",
  "quote",
@@ -1988,18 +1950,6 @@ dependencies = [
  "anyhow",
  "fs-err",
  "px_workspace_hack",
- "sha2",
- "tracing",
-]
-
-[[package]]
-name = "persist_if_changed"
-version = "0.1.80"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4d8c4d919593d5d83530e1fd46b830d5b8d8e566d73fd33b3b9c1b943b335d67"
-dependencies = [
- "anyhow",
- "fs-err",
  "sha2",
  "tracing",
 ]
@@ -2417,7 +2367,7 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "web-sys",
- "webpki-roots",
+ "webpki-roots 1.0.1",
 ]
 
 [[package]]
@@ -2694,7 +2644,7 @@ dependencies = [
  "anyhow",
  "app",
  "dotenvy",
- "pavex 0.1.80 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pavex",
  "reqwest",
  "server_sdk",
  "tokio",
@@ -2710,13 +2660,19 @@ dependencies = [
 name = "server_sdk"
 version = "0.1.0"
 dependencies = [
+ "anyhow",
  "app",
+ "biscotti",
  "http",
  "hyper",
  "matchit",
- "pavex 0.1.80",
- "pavex_tracing 0.1.80",
+ "pavex",
+ "pavex_session",
+ "pavex_session_sqlx",
+ "pavex_tracing",
  "serde",
+ "sqlx-core",
+ "sqlx-sqlite",
  "thiserror",
 ]
 
@@ -2862,14 +2818,18 @@ dependencies = [
  "memchr",
  "once_cell",
  "percent-encoding",
+ "rustls",
  "serde",
  "serde_json",
  "sha2",
  "smallvec",
  "thiserror",
+ "tokio",
+ "tokio-stream",
  "tracing",
  "url",
  "uuid",
+ "webpki-roots 0.26.11",
 ]
 
 [[package]]
@@ -2906,6 +2866,7 @@ dependencies = [
  "sqlx-postgres",
  "sqlx-sqlite",
  "syn",
+ "tokio",
  "url",
 ]
 
@@ -3284,6 +3245,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8e727b36a1a0e8b74c376ac2211e40c2c8af09fb4013c60d910495810f008e9b"
 dependencies = [
  "rustls",
+ "tokio",
+]
+
+[[package]]
+name = "tokio-stream"
+version = "0.1.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eca58d7bba4a75707817a2c44174253f9236b2d5fbd055602e9d5c07c139a047"
+dependencies = [
+ "futures-core",
+ "pin-project-lite",
  "tokio",
 ]
 
@@ -3785,6 +3757,15 @@ checksum = "5a6580f308b1fad9207618087a65c04e7a10bc77e02c8e84e9b00dd4b12fa0bb"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
+]
+
+[[package]]
+name = "webpki-roots"
+version = "0.26.11"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "521bc38abb08001b01866da9f51eb7c5d647a19260e00054a8c7fd5f9e57f7a9"
+dependencies = [
+ "webpki-roots 1.0.1",
 ]
 
 [[package]]

@@ -15,13 +15,20 @@ name = "bp"
 unexpected_cfgs = { level = "allow", check-cfg = ['cfg(pavex_ide_hint)'] }
 
 [dependencies]
+anyhow = "1"
 cargo_px_env = "0.1"
 humantime-serde = "1.1"
 pavex = { version = "0.1.80" }
 pavex_tracing = { version = "0.1.80" }
 pavex_cli_client = { version = "0.1.80" }
-tracing = "0.1"
-tracing_log_error = "0.1"
+pavex_session = { path = "../../libs/pavex_session" }
+pavex_session_sqlx = { path = "../../libs/pavex_session_sqlx", features = [
+    "sqlite",
+] }
 serde = { version = "1", features = ["derive"] }
 serde-aux = "4"
+sqlx = { version = "0.8", default-features = false, features = ["postgres"] }
+tracing = "0.1"
+tracing-log = "0.2.0"
+tracing_log_error = "0.1"
 workspace_hack = { path = "../workspace_hack" }

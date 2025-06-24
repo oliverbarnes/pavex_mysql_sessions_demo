@@ -1,2 +1,12 @@
 [env]
 PX_PROFILE = { value = "dev" }
+
+[patch.crates-io]
+pavex = { path = "../libs/pavex" }
+pavex_cli_client = { path = "../libs/pavex_cli_client" }
+pavex_tracing = { path = "../libs/pavex_tracing" }
+pavex_bp_schema = { path = "../libs/pavex_bp_schema" }
+pavex_session = { path = "../libs/pavex_session" }
+pavex_session_sqlx = { path = "../libs/pavex_session_sqlx", features = [
+    "sqlite",
+] }

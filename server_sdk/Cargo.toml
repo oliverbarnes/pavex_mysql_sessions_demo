@@ -16,11 +16,17 @@ verifier_args = ["--check"]
 clippy = { all = "allow" }
 
 [dependencies]
+anyhow = { version = "1", default-features = false }
 app = { version = "0.1", path = "../app", default-features = false }
+biscotti = { version = "0.4", default-features = false }
 http = { version = "1", default-features = false }
 hyper = { version = "1", default-features = false }
 matchit = { version = "0.8", default-features = false }
 pavex = { version = "0.1", path = "../../libs/pavex", default-features = false }
+pavex_session = { version = "0.1", path = "../../libs/pavex_session", default-features = false }
+pavex_session_sqlx = { version = "0.1", path = "../../libs/pavex_session_sqlx", default-features = false }
 pavex_tracing = { version = "0.1", path = "../../libs/pavex_tracing", default-features = false }
 serde = { version = "1", default-features = false }
+sqlx-core = { version = "0.8", default-features = false }
+sqlx-sqlite = { version = "0.8", default-features = false }
 thiserror = { version = "2", default-features = false }
