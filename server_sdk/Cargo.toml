@@ -28,5 +28,5 @@ pavex_session_sqlx = { version = "0.1", path = "../../libs/pavex_session_sqlx", 
 pavex_tracing = { version = "0.1", path = "../../libs/pavex_tracing", default-features = false }
 serde = { version = "1", default-features = false }
 sqlx-core = { version = "0.8", default-features = false }
-sqlx-sqlite = { version = "0.8", default-features = false }
+sqlx-mysql = { version = "0.8", default-features = false }
 thiserror = { version = "2", default-features = false }

@@ -3,8 +3,8 @@
 # to commit this file to the repository.
 server:
   ip: "127.0.0.1"
-  port: 8000
+  port: 8090
 session:
   ttl: 24 hours
 database:
-  database_path: "./demo_sessions.db"
+  url: "mysql://root:password@localhost:3306/session_demo"

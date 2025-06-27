@@ -24,40 +24,44 @@ pub struct ApplicationState {
 impl ApplicationState {
     pub async fn new(
         app_config: crate::ApplicationConfig,
-        v0: sqlx_core::pool::Pool<sqlx_sqlite::Sqlite>,
     ) -> Result<crate::ApplicationState, crate::ApplicationStateError> {
         Ok(
-            Self::_new(v0, app_config.session, app_config.cookies, app_config.greet)
+            Self::_new(
+                    &app_config.database,
+                    app_config.session,
+                    app_config.cookies,
+                    app_config.greet,
+                )
                 .await,
         )
     }
     async fn _new(
-        v0: sqlx_core::pool::Pool<sqlx_sqlite::Sqlite>,
+        v0: &app::configuration::DatabaseConfig,
         v1: pavex_session::SessionConfig,
         v2: biscotti::ProcessorConfig,
         v3: app::configuration::GreetConfig,
     ) -> crate::ApplicationState {
-        let v4 = pavex_session_sqlx::SqliteSessionStore::new(v0);
-        let v5 = <pavex_session::SessionStore as core::convert::From<
-            pavex_session_sqlx::SqliteSessionStore,
-        >>::from(v4);
-        let v6 = <pavex::cookie::Processor as core::convert::From<
+        let v4 = app::configuration::DatabaseConfig::get_pool(v0).await;
+        let v5 = pavex_session_sqlx::MySqlSessionStore::new(v4);
+        let v6 = <pavex_session::SessionStore as core::convert::From<
+            pavex_session_sqlx::MySqlSessionStore,
+        >>::from(v5);
+        let v7 = <pavex::cookie::Processor as core::convert::From<
             pavex::cookie::ProcessorConfig,
         >>::from(v2);
         crate::ApplicationState {
             greet_config: v3,
-            processor: v6,
+            processor: v7,
             session_config: v1,
-            session_store: v5,
+            session_store: v6,
         }
     }
 }
 #[deprecated(note = "Use `ApplicationState::new` instead.")]
 pub async fn build_application_state(
     app_config: crate::ApplicationConfig,
-    v0: sqlx_core::pool::Pool<sqlx_sqlite::Sqlite>,
 ) -> Result<crate::ApplicationState, crate::ApplicationStateError> {
-    crate::ApplicationState::new(app_config, v0).await
+    crate::ApplicationState::new(app_config).await
 }
 #[derive(Debug, thiserror::Error)]
 pub enum ApplicationStateError {}

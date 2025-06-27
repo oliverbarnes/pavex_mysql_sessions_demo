@@ -39,8 +39,7 @@ async fn _main() -> anyhow::Result<()> {
     let server_builder = Server::new().listen(tcp_listener);
     let shutdown_timeout = config.server.graceful_shutdown_timeout;
 
-    let pool = config.database.get_pool().await;
-    let application_state = ApplicationState::new(config, pool)
+    let application_state = ApplicationState::new(config)
         .await
         .context("Failed to build the application state")?;
 

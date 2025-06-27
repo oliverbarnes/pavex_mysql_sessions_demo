@@ -1,10 +1,10 @@
 //! Refer to Pavex's [configuration guide](https://pavex.dev/docs/guide/configuration) for more details
 //! on how to manage configuration values.
 use pavex::server::IncomingStream;
-use pavex_session_sqlx::SqliteSessionStore;
+use pavex_session_sqlx::MySqlSessionStore;
 use serde::Deserialize;
 use sqlx::ConnectOptions;
-use sqlx::sqlite::{SqliteConnectOptions, SqlitePool, SqlitePoolOptions};
+use sqlx::mysql::{MySqlConnectOptions, MySqlPool, MySqlPoolOptions};
 
 #[derive(serde::Deserialize, Clone, Debug)]
 /// A group of configuration values to showcase how app config works.
@@ -72,28 +72,28 @@ impl ServerConfig {
 #[derive(Clone, Debug, Deserialize)]
 #[pavex::config(key = "database", include_if_unused)]
 pub struct DatabaseConfig {
-    pub database_path: String,
+    pub url: String,
 }
 
 impl DatabaseConfig {
-    pub fn connect_options(&self) -> SqliteConnectOptions {
-        SqliteConnectOptions::new()
-            .filename(&self.database_path)
-            .create_if_missing(true)
+    pub fn connect_options(&self) -> MySqlConnectOptions {
+        self.url
+            .parse::<MySqlConnectOptions>()
+            .expect("Invalid MySQL connection URL")
             .log_statements(tracing_log::log::LevelFilter::Trace)
     }
 
-    pub async fn get_pool(&self) -> SqlitePool {
-        let pool = SqlitePoolOptions::new()
+    pub async fn get_pool(&self) -> MySqlPool {
+        let pool = MySqlPoolOptions::new()
             .acquire_timeout(std::time::Duration::from_secs(2))
             .connect_lazy_with(self.connect_options());
 
         // Run migrations
-        let store = SqliteSessionStore::new(pool.clone());
+        let store = MySqlSessionStore::new(pool.clone());
         store
             .migrate()
             .await
-            .expect("Failed to run SQLite migrations");
+            .expect("Failed to run MySQL migrations");
 
         pool
     }
